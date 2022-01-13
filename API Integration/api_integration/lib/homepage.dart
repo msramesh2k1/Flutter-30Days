@@ -1,5 +1,6 @@
 import 'package:api_integration/services/api_services.dart';
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -70,16 +71,21 @@ class _HomePageState extends State<HomePage> {
                                 fit: BoxFit.cover,
                               ),
                             ),
-                            const Positioned(
+                            Positioned(
                               right: 20,
                               top: 20,
-                              child: CircleAvatar(
-                                child: Icon(
-                                  Icons.open_in_new,
-                                  color: Colors.black,
+                              child: GestureDetector(
+                                onTap: () {
+                                  launch(snapshots.data![index]['url']);
+                                },
+                                child: const CircleAvatar(
+                                  child: Icon(
+                                    Icons.open_in_new,
+                                    color: Colors.black,
+                                  ),
+                                  backgroundColor: Colors.white,
+                                  radius: 25,
                                 ),
-                                backgroundColor: Colors.white,
-                                radius: 25,
                               ),
                             ),
                           ],

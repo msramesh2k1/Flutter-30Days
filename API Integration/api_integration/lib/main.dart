@@ -1,7 +1,8 @@
+import 'package:api_integration/services/api_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:provider/provider.dart';
 
 import 'homepage.dart';
 
@@ -14,8 +15,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const GetMaterialApp(
-      home: HomePage(),
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => APIService(),
+        ),
+      ],
+      child: const MaterialApp(home: HomePage()),
     );
   }
 }

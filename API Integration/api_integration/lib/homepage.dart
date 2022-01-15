@@ -1,5 +1,4 @@
 import 'package:api_integration/controllers/newscontroller.dart';
-import 'package:api_integration/services/api_services.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -12,32 +11,23 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  NewsController newsController = Get.put(NewsController());
-  late Future<List> newsdata;
-  @override
-  void initState() {
-    super.initState();
-    newsdata = APIService().fetchnews();
-    print(newsdata);
-  }
-
+  NewsController controller = Get.put(NewsController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "NEWS - O",
-          style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 10),
+        appBar: AppBar(
+          title: const Text(
+            "NEWS - O",
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 10),
+          ),
+          backgroundColor: Colors.black,
         ),
         backgroundColor: Colors.black,
-      ),
-      backgroundColor: Colors.black,
-      body: GetBuilder<NewsController>(
-        builder: (controller) {
-          if (controller.newsdata.isEmpty) {
+        body: GetBuilder<NewsController>(builder: (controller) {
+          if (controller.article.isEmpty) {
             return const LinearProgressIndicator(
               color: Colors.white,
               backgroundColor: Colors.black,
@@ -45,7 +35,7 @@ class _HomePageState extends State<HomePage> {
           } else {
             return PageView.builder(
                 scrollDirection: Axis.vertical,
-                itemCount: controller.newsdata.length,
+                itemCount: controller.article.length,
                 itemBuilder: (_, index) {
                   return Padding(
                     padding: const EdgeInsets.all(1.0),
@@ -65,7 +55,7 @@ class _HomePageState extends State<HomePage> {
                                 },
                                 blendMode: BlendMode.dstIn,
                                 child: Image.network(
-                                  controller.newsdata[index]['urlToImage'] ??
+                                  controller.article[index].urlToImage ??
                                       "https://images.pexels.com/photos/9967888/pexels-photo-9967888.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
                                   width: MediaQuery.of(context).size.width,
                                   height:
@@ -78,7 +68,8 @@ class _HomePageState extends State<HomePage> {
                                 top: 20,
                                 child: GestureDetector(
                                   onTap: () {
-                                    launch(controller.newsdata[index]['url']);
+                                    launch(controller.article[index].url
+                                        .toString());
                                   },
                                   child: const CircleAvatar(
                                     child: Icon(
@@ -95,7 +86,7 @@ class _HomePageState extends State<HomePage> {
                           Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
-                              controller.newsdata[index]['title'],
+                              controller.article[index].title.toString(),
                               style: const TextStyle(
                                   fontSize: 22,
                                   letterSpacing: 0.5,
@@ -107,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                             padding:
                                 const EdgeInsets.only(left: 8.0, right: 8.0),
                             child: Text(
-                              controller.newsdata[index]['description'] ??
+                              controller.article[index].description ??
                                   'NEWS - O',
                               maxLines: 4,
                               textAlign: TextAlign.start,
@@ -127,8 +118,7 @@ class _HomePageState extends State<HomePage> {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(
-                                  controller.newsdata[index]['author'] ??
-                                      "NEWS - O",
+                                  controller.article[index].author.toString(),
                                   style: const TextStyle(
                                       fontSize: 10,
                                       letterSpacing: 0.5,
@@ -146,9 +136,6 @@ class _HomePageState extends State<HomePage> {
                   );
                 });
           }
-        },
-        init: NewsController(),
-      ),
-    );
+        }));
   }
 }

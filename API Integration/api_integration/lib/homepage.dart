@@ -1,5 +1,7 @@
+import 'package:api_integration/models/newsmodel.dart';
 import 'package:api_integration/services/api_services.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 import 'package:provider/src/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -11,16 +13,10 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late Future<List> newsdata;
-  @override
-  void initState() {
-    super.initState();
-    newsdata = APIService().fetchnews();
-    print(newsdata);
-  }
 
   @override
   Widget build(BuildContext context) {
+    // APIService apiservice = Provider.of<APIService>(context);
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -33,7 +29,7 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.black,
       ),
       backgroundColor: Colors.black,
-      body: FutureBuilder<List>(
+      body: FutureBuilder<List<Article>>(
         future: context.read<APIService>().fetchnews(),
         builder: (context, snapshots) {
           if (snapshots.data == null) {
@@ -42,6 +38,7 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.black,
             );
           }
+
           return PageView.builder(
               scrollDirection: Axis.vertical,
               itemCount: snapshots.data!.length,
@@ -64,7 +61,7 @@ class _HomePageState extends State<HomePage> {
                               },
                               blendMode: BlendMode.dstIn,
                               child: Image.network(
-                                snapshots.data![index]['urlToImage'] ??
+                                snapshots.data![index].urlToImage ??
                                     "https://images.pexels.com/photos/9967888/pexels-photo-9967888.jpeg?auto=compress&cs=tinysrgb&dpr=2&w=500",
                                 width: MediaQuery.of(context).size.width,
                                 height:
@@ -77,7 +74,7 @@ class _HomePageState extends State<HomePage> {
                               top: 20,
                               child: GestureDetector(
                                 onTap: () {
-                                  launch(snapshots.data![index]['url']);
+                                  launch(snapshots.data![index].url.toString());
                                 },
                                 child: const CircleAvatar(
                                   child: Icon(
@@ -94,7 +91,7 @@ class _HomePageState extends State<HomePage> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
-                            snapshots.data![index]['title'],
+                            snapshots.data![index].title.toString(),
                             style: const TextStyle(
                                 fontSize: 22,
                                 letterSpacing: 0.5,
@@ -105,7 +102,7 @@ class _HomePageState extends State<HomePage> {
                         Padding(
                           padding: const EdgeInsets.only(left: 8.0, right: 8.0),
                           child: Text(
-                            snapshots.data![index]['description'] ?? 'NEWS - O',
+                            snapshots.data![index].description.toString() ?? 'NEWS - O',
                             maxLines: 4,
                             textAlign: TextAlign.start,
                             style: const TextStyle(
@@ -124,7 +121,7 @@ class _HomePageState extends State<HomePage> {
                             child: Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                snapshots.data![index]['author'] ?? "NEWS - O",
+                                snapshots.data![index].author.toString() ?? "NEWS - O",
                                 style: const TextStyle(
                                     fontSize: 10,
                                     letterSpacing: 0.5,
